@@ -1,0 +1,22 @@
+
+.theme h4,
+.plugin h4 {
+	margin: 0;
+}
+
+.theme,
+.plugin,
+.site-info {
+//	border: solid 1px #ccc;
+	padding: 0.5em;
+}
+
+.theme:hover,
+.plugin:hover,
+.site-info:hover {
+	background-color:#ccc;
+}
+
+.site-info .admin-links {
+	float:right;
+}
