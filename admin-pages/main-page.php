@@ -169,7 +169,7 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 			);
 			
 			echo '<tr>
-			<td><a href="'.$page_url.'">'.$theme_info['data']->Title.'</a></td>
+			<td><a href="'.$page_url.'">'.$theme_info['data']->Title.'</a> v.'.$theme_info['data']->Version .'</td>
 			<td class="count">'.count($theme_info['sites']).'</td>
 			<td class="count">'.count($theme_info['sites_archived']).'</td>
 			</tr>';
@@ -198,10 +198,8 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 					'name'		=> $plugin,
 				)
 			);
-			
-//echo '<h4><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a> ( '.count($plugin_info['sites']).' sites )</h4>';
 			echo '<tr>
-			<td><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a></td>
+			<td><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a> v.'.$plugin_info['data']['Version'] .'</td>
 			<td class="count">'.count($plugin_info['sites']).'</td>
 			<td class="count">'.count($plugin_info['sites_archived']).'</td>
 			</tr>';
