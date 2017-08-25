@@ -110,7 +110,7 @@ class SITES_STATS_Model
 			if( !array_key_exists($theme, $stats['theme']) )
 			{
 				$stats['theme'][$theme] = array();
-				$stats['theme'][$theme]['data'] = wp_get_theme( $theme, false );
+				$stats['theme'][$theme]['data'] = wp_get_theme($theme);
 				$stats['theme'][$theme]['sites'] = array();
 			}
 			$stats['theme'][$theme]['sites'][] = $site;
@@ -141,10 +141,10 @@ class SITES_STATS_Model
 			if( !array_key_exists($theme, $stats['theme']) )
 			{
 				$stats['theme'][$theme] = array();
-				$stats['theme'][$theme]['data'] = wp_get_theme( $theme, false );
+				$stats['theme'][$theme]['data'] = wp_get_theme($theme);
 				$stats['theme'][$theme]['sites_archived'] = array();
 			}
-			$stats['theme'][$theme]['sites_archived'][] = $site;
+			$stats['theme'][$theme]['sites_archived'][] = $site_archived;
 			
 			foreach( $site_archived['plugins'] as $plugin )
 			{
@@ -154,7 +154,7 @@ class SITES_STATS_Model
 					$stats['plugin'][$plugin]['data'] = @get_plugin_data( WP_PLUGIN_DIR.'/'.$plugin, false );
 					$stats['plugin'][$plugin]['sites_archived'] = array();
 				}
-				$stats['plugin'][$plugin]['sites_archived'][] = $site;
+				$stats['plugin'][$plugin]['sites_archived'][] = $site_archived;
 			}
 			
 		}
