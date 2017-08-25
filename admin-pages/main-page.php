@@ -118,15 +118,27 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 			return;
 		}
 		
-		if( !array_key_exists($name, $stats[$type]) || count($stats[$type][$name]['sites']) == 0 )
+		if( !array_key_exists($name, $stats[$type]) || (count($stats[$type][$name]['sites']) == 0 && count($stats[$type][$name]['sites_archived']) == 0))
 		{
 			echo ucfirst( $type ).' not activated on any sites.';
 			return;
 		}
 		
-		foreach( $stats[$type][$name]['sites'] as $site )
-		{
-			$this->print_site( $site, $type );
+		if(count($stats[$type][$name]['sites']) > 0){
+			echo '<div><h4>Active Sites</h4>';
+			foreach( $stats[$type][$name]['sites'] as $site )
+			{
+				$this->print_site( $site, $type );
+			}
+			echo '</div><br>';
+		}
+		if(count($stats[$type][$name]['sites_archived']) > 0){
+			echo '<div><h4>Archived Sites</h4>';
+			foreach( $stats[$type][$name]['sites_archived'] as $site )
+			{
+				$this->print_site( $site, $type );
+			}
+			echo '</div>';
 		}
 	}
 	
@@ -139,7 +151,12 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		?>
 		
 		<h3>Themes</h3>
-		
+		<?php echo count($stats['theme']).' themes installed'; ?>
+		<table>
+		<thead>
+		<tr><th>Theme Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
+		</thead>
+		<tbody>
 		<?php
 		foreach( $stats['theme'] as $theme => $theme_info )
 		{
@@ -151,18 +168,26 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 				)
 			);
 			
-			echo '<div class="theme">';
-			echo '<h4><a href="'.$page_url.'">'.$theme_info['data']->Title.'</a> ( '.count($theme_info['sites']).' sites )</h4>';
+			echo '<tr>
+			<td><a href="'.$page_url.'">'.$theme_info['data']->Title.'</a></td>
+			<td class="count">'.count($theme_info['sites']).'</td>
+			<td class="count">'.count($theme_info['sites_archived']).'</td>
+			</tr>';
 // 			foreach( $sites as $site )
 // 			{
 // 				$this->print_site( $site, 'theme' );
 // 			}
-			echo '</div>';
 		}
 		?>
-
-		<h2>Plugins</h2>
-		
+		</tbody>
+		</table>
+		<h3>Plugins</h3>
+		<?php echo count($stats['plugin']).' plugins installed'; ?>
+		<table>
+		<thead>
+		<tr><th>Plugin Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
+		</thead>
+		<tbody>
 		<?php
 		foreach( $stats['plugin'] as $plugin => $plugin_info )
 		{
@@ -174,16 +199,20 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 				)
 			);
 			
-			echo '<div class="plugin">';
-			echo '<h4><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a> ( '.count($plugin_info['sites']).' sites )</h4>';
+//echo '<h4><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a> ( '.count($plugin_info['sites']).' sites )</h4>';
+			echo '<tr>
+			<td><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a></td>
+			<td class="count">'.count($plugin_info['sites']).'</td>
+			<td class="count">'.count($plugin_info['sites_archived']).'</td>
+			</tr>';
 // 			foreach( $sites as $site )
 // 			{
 // 				$this->print_site( $site, 'plugin' );
 // 			}
-			echo '</div>';
 		}
 		?>
-		
+		</tbody>
+		</table>
 		<?php
 	}
 	
@@ -207,8 +236,10 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		
 		<div class="site-info">
 		
-			<span class="title"><a href="<?php echo $site['url']; ?>" target="_blank"><?php echo $site['title']; ?></a></span>
+			<span class="title"><a href="<?php echo $site['url']; ?>" target="_blank"><?php echo $site['title'] ?: '<i>--No Title--</i>'; ?></a></span>
 			<span class="admin-links">
+			
+			<a href="<?php echo 'site-info.php?id='.$site['id'] ?> " target="_blank">Network Admin</a>&nbsp;&nbsp;
 				<a href="<?php echo $admin_url; ?>" target="_blank">Admin</a>&nbsp;&nbsp;
 				<a href="<?php echo $admin_url.'/themes.php'; ?>" target="_blank">Themes</a>&nbsp;&nbsp;
 				<a href="<?php echo $admin_url.'/plugins.php'; ?>" target="_blank">Plugins</a>&nbsp;&nbsp;
