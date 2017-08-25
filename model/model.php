@@ -116,22 +116,24 @@ class SITES_STATS_Model
 			$stats['theme'][$theme]['sites'][] = $site;
 			
 			//Echo out the plugins that show as active in the db, but don't exist
-			echo '<div style="display:none">';
+			
 			foreach( $site['plugins'] as $plugin )
 			{
 				if( !array_key_exists($plugin, $stats['plugin']) )
 				{
+					echo '<div class="hidden">';
 					$stats['plugin'][$plugin] = array();
 					
 					echo $site['url'];
 					echo '<br>'.$plugin.'<br><br>';
+					echo '</div>';
 					$stats['plugin'][$plugin]['data'] = @get_plugin_data( WP_PLUGIN_DIR.'/'.$plugin, false );
 					$stats['plugin'][$plugin]['data']['Title'] = $stats['plugin'][$plugin]['data']['Name'];
 					$stats['plugin'][$plugin]['sites'] = array();
 				}
 				$stats['plugin'][$plugin]['sites'][] = $site;
 			}
-			echo '</div>';
+		
 
 			
 		}

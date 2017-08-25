@@ -181,8 +181,15 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		?>
 		</tbody>
 		</table>
-		<h3>Plugins</h3>
-		<?php echo count($stats['plugin']).' plugins installed'; ?>
+		<h3>Site Plugins</h3>
+		<?php 
+		$site_plugin_count = 0;
+		$network_plugin_count = 0;
+		foreach( $stats['plugin'] as $plugin => $plugin_info ){
+			if(!is_plugin_active_for_network($plugin))$site_plugin_count++;
+			elseif(is_plugin_active_for_network($plugin))$network_plugin_count++;
+		}
+		echo $site_plugin_count.' site plugins installed'; ?>
 		<table>
 		<thead>
 		<tr><th>Plugin Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
@@ -191,6 +198,7 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		<?php
 		foreach( $stats['plugin'] as $plugin => $plugin_info )
 		{
+			if(!is_plugin_active_for_network($plugin)){
 			$page_url = $this->get_page_url(
 				array(
 					'action' 	=> 'sites',
@@ -203,10 +211,27 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 			<td class="count">'.count($plugin_info['sites']).'</td>
 			<td class="count">'.count($plugin_info['sites_archived']).'</td>
 			</tr>';
+			}
 // 			foreach( $sites as $site )
 // 			{
 // 				$this->print_site( $site, 'plugin' );
 // 			}
+		}
+		?>
+		</tbody>
+		</table>
+		<h3>Network Activated Plugins</h3>
+		<?php echo $network_plugin_count.' network plugins activated'; ?>
+		<table>
+		<tbody>
+		<?php
+		foreach( $stats['plugin'] as $plugin => $plugin_info )
+		{
+			if(is_plugin_active_for_network($plugin)){
+			echo '<tr>
+			<td>'.$plugin_info['data']['Title'].'</td>
+			</tr>';
+			}
 		}
 		?>
 		</tbody>

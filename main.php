@@ -3,7 +3,7 @@
 Plugin Name: Site Stats
 Plugin URI: 
 Description: 
-Version: 1.1.2
+Version: 1.2.3
 Author: Crystal Barton
 Author URI: http://www.crystalbarton.com
 Network: True
