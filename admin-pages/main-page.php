@@ -154,7 +154,7 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		<?php echo count($stats['theme']).' themes installed'; ?>
 		<table>
 		<thead>
-		<tr><th>Theme Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
+		<tr><th class="column-name">Theme Name</th><th class="count">Active Sites</th><th class="count">Archived Sites</th></tr>
 		</thead>
 		<tbody>
 		<?php
@@ -192,7 +192,7 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		echo $site_plugin_count.' site plugins installed'; ?>
 		<table>
 		<thead>
-		<tr><th>Plugin Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
+		<tr><th class="column-name">Plugin Name</th><th class="count">Active Sites</th><th class="count">Archived Sites</th></tr>
 		</thead>
 		<tbody>
 		<?php
@@ -229,7 +229,7 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		{
 			if(is_plugin_active_for_network($plugin)){
 			echo '<tr>
-			<td>'.$plugin_info['data']['Title'].'</td>
+			<td class="cell-space">'.$plugin_info['data']['Title'].'</td>
 			</tr>';
 			}
 		}
