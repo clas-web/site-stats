@@ -3,7 +3,7 @@
 Plugin Name: Site Stats
 Plugin URI: 
 Description: 
-Version: 1.2.3
+Version: 1.3.0
 Author: Crystal Barton
 Author URI: http://www.crystalbarton.com
 Network: True
@@ -20,7 +20,7 @@ define( 'SITE_STATS_DEBUG', true );
 define( 'SITE_STATS_PLUGIN_PATH', dirname(__FILE__) );
 define( 'SITE_STATS_PLUGIN_URL', plugins_url('', __FILE__) );
 
-define( 'SITE_STATS_VERSION', '0.0.1' );
+define( 'SITE_STATS_VERSION', '1.3.0' );
 
 endif;
 

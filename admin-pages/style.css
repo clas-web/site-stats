@@ -1,43 +1,53 @@
-
 .theme h4,
 .plugin h4 {
 	margin: 0;
 }
-
 .theme,
 .plugin,
 .site-info {
-//	border: solid 1px #ccc;
 	padding: 0.5em;
+	padding-left: 3em;
 }
-
-.theme:hover,
-.plugin:hover,
-.site-info:hover {
+.sites-stats tr:hover {
 	background-color:#ccc;
 }
-
+.site-info a {
+	text-decoration: none;
+}
 .site-info .admin-links {
 	float:right;
 }
-
 .sites-stats table {
-  border-collapse: separate;
-  border-spacing: 50px 10px;
+  border-collapse: collapse;
 }
-
-.sites-stats th{
+.sites-stats th:first-child{
+	width:60%;
+}
+.sites-stats th:not(:first-child) {
+	width: 13%;
+}
+.sites-stats .item-name{
 	text-align:left;
 }
-
 .sites-stats td{
 	font-weight:600;
+	padding: 3px;
 }
-
-.count{
+.sites-stats .version{
+	text-align:right;
+}
+.sites-stats .count{
 	text-align:center;
 }
-
-.hidden{
+.hidden, .hide-broken{
 	display:none;
+}
+.label tr td label {
+	display: block;
+}
+[data-toggle="toggle"] {
+	display: none !important;
+}
+.sites-stats .title{
+	margin-right:10px;	
 }

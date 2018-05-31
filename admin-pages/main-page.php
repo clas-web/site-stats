@@ -11,18 +11,7 @@
  */
 
 if( !class_exists('SITE_STATS_MainAdminPage') ):
-class SITE_STATS_MainAdminPage extends APL_AdminPage
-{
-	
-	private $model = null;	
-	private $list_table = null;
-	
-	private $filter_types;
-	private $filter;
-	private $search;
-	private $orderby;
-	
-	
+class SITE_STATS_MainAdminPage extends APL_AdminPage{
 	/**
 	 * Creates an TT_ThemeListAdminPage object.
 	 */
@@ -42,111 +31,20 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 	 */
 	public function enqueue_scripts()
 	{
-		wp_enqueue_style( 'sites-stats', SITE_STATS_PLUGIN_URL.'/admin-pages/style.css' );
+		wp_enqueue_script( 'site-stats-js', SITE_STATS_PLUGIN_URL.'/admin-pages/site-stats-table-toggle.js', array('jquery') );
+    	wp_enqueue_style( 'sites-stats', SITE_STATS_PLUGIN_URL.'/admin-pages/style.css' );
 	}
 	
 	
 	/**
 	 * Displays the current admin page.
 	 */
-	public function display()
-	{
-		if( isset($_REQUEST['action']) && $_REQUEST['action'] == 'sites' )
-		{
-			$this->print_site_list(); return;
-		}
-		
+	public function display(){
 		$this->print_stats();
 	}
 	
 	
-	private function print_site_list()
-	{
-		$back_url = $this->get_page_url();
-		
-		?>
-		<br/>
-		<a href="<?php echo $back_url; ?>"><< Back</a>
-		<?php
-		
-		if( !isset($_REQUEST['type']) )
-		{
-			echo 'Type is required when listing sites.';
-			return;
-		}
-		$type = $_REQUEST['type'];
-		
-		if( !isset($_REQUEST['name']) )
-		{
-			echo 'Name is required when listing sites.';
-			return;
-		}
-		$name = $_REQUEST['name'];
-		
-		
-		if( $type != 'theme' && $type != 'plugin' )
-		{
-			echo 'Invalid Type: '.$type;
-			return;
-		}
-		
-		
-		$stats = $this->model->get_site_stats();
-		
-		$title = $name;
-		switch( $type )
-		{
-			case 'plugin':
-				$data = @get_plugin_data( WP_PLUGIN_DIR.'/'.$name, false );
-				if( !$data['Name'] ) $data = null;
-				else $title = $data['Title'];
-				break;
-			case 'theme':
-				$data = wp_get_theme( $name, false );
-				if( !$data->exists() ) $data = null;
-				else $title = $data->Title;
-				break;
-		}
-		
-		?>
-		<h3><?php echo ucfirst( $type ); ?>: <?php echo $title; ?></h3>
-		<?php
-		
-		if( !$data )
-		{
-			echo 'Not found.';
-			return;
-		}
-		
-		if( !array_key_exists($name, $stats[$type]) || (count($stats[$type][$name]['sites']) == 0 && count($stats[$type][$name]['sites_archived']) == 0))
-		{
-			echo ucfirst( $type ).' not activated on any sites.';
-			return;
-		}
-		
-		if(count($stats[$type][$name]['sites']) > 0){
-			echo '<div><h4>Active Sites</h4>';
-			foreach( $stats[$type][$name]['sites'] as $site )
-			{
-				$this->print_site( $site, $type );
-			}
-			echo '</div><br>';
-		}
-		if(count($stats[$type][$name]['sites_archived']) > 0){
-			echo '<div><h4>Archived Sites</h4>';
-			foreach( $stats[$type][$name]['sites_archived'] as $site )
-			{
-				$this->print_site( $site, $type );
-			}
-			echo '</div>';
-		}
-	}
-	
-	
-	
-	
-	private function print_stats()
-	{
+	private function print_stats(){
 		$stats = $this->model->get_site_stats();
 		?>
 		
@@ -154,7 +52,7 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		<?php echo count($stats['theme']).' themes installed'; ?>
 		<table>
 		<thead>
-		<tr><th>Theme Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
+		<tr><th class="item-name">Theme Name</th><th class="version">Version</th><th class="count">Active Sites</th><th class="count">Archived Sites</th></tr>
 		</thead>
 		<tbody>
 		<?php
@@ -168,15 +66,21 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 				)
 			);
 			
-			echo '<tr>
-			<td><a href="'.$page_url.'">'.$theme_info['data']->Title.'</a> v.'.$theme_info['data']->Version .'</td>
+			echo '<tbody><tr>
+			<td><label for="'.$theme_info['data']->Title.'">'.$theme_info['data']->Title.'</label>
+				<input type="checkbox" name="'.$theme_info['data']->Title.'" id="'.$theme_info['data']->Title.'" data-toggle="toggle"></td>
+			<td class="version">'.$theme_info['data']->Version .'</td>
 			<td class="count">'.count($theme_info['sites']).'</td>
 			<td class="count">'.count($theme_info['sites_archived']).'</td>
-			</tr>';
-// 			foreach( $sites as $site )
-// 			{
-// 				$this->print_site( $site, 'theme' );
-// 			}
+			</tr></tbody><tbody class="hidden">';
+ 			$sites = $theme_info['sites'];
+			if ($sites){
+				foreach( $sites as $site ) $this->print_site($site);
+			}
+			else {
+				echo '<tr><td><div class="site-info">This theme is not active on any active sites</div></tr></td>';
+			}
+			echo "</tbody>";
 		}
 		?>
 		</tbody>
@@ -189,13 +93,15 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 			if(!is_plugin_active_for_network($plugin))$site_plugin_count++;
 			elseif(is_plugin_active_for_network($plugin))$network_plugin_count++;
 		}
-		echo $site_plugin_count.' site plugins installed'; ?>
+		echo $site_plugin_count.' site plugins installed'; 
+		?>
 		<table>
 		<thead>
-		<tr><th>Plugin Name</th><th>Active Sites</th><th>Archived Sites</th></tr>
+		<tr><th class="item-name">Plugin Name</th><th class="version">Version</th><th class="count">Active Sites</th><th class="count">Archived Sites</th></tr>
 		</thead>
 		<tbody>
 		<?php
+		$i = 0;
 		foreach( $stats['plugin'] as $plugin => $plugin_info )
 		{
 			if(!is_plugin_active_for_network($plugin)){
@@ -206,16 +112,31 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 					'name'		=> $plugin,
 				)
 			);
+			$plugin_title = $plugin_info['data']['Title'];
+			if(!$plugin_title){
+				$plugin_title = "<i>Broken Plugin </i>".$i;
+				$i++;
+				echo '<tbody class="hide-broken">';
+			}
+			else {
+				echo '<tbody>';
+			}
 			echo '<tr>
-			<td><a href="'.$page_url.'">'.$plugin_info['data']['Title'].'</a> v.'.$plugin_info['data']['Version'] .'</td>
+			<td><label for="'.$plugin_title.'">'.$plugin_title.'</label>
+				<input type="checkbox" name="'.$plugin_title.'" id="'.$plugin_title.'" data-toggle="toggle"></td>
+			<td class="version">'.$plugin_info['data']['Version'].'</td>
 			<td class="count">'.count($plugin_info['sites']).'</td>
 			<td class="count">'.count($plugin_info['sites_archived']).'</td>
-			</tr>';
+			</tr></tbody><tbody class="hidden">';
+ 			$sites = $plugin_info['sites'];
+			if ($sites){
+				foreach( $sites as $site ) $this->print_site($site);
 			}
-// 			foreach( $sites as $site )
-// 			{
-// 				$this->print_site( $site, 'plugin' );
-// 			}
+			else {
+				echo '<tr><td><div class="site-info">This plugin is not active on any active sites</div></tr></td>';
+			}
+			echo "</tbody>";
+			}
 		}
 		?>
 		</tbody>
@@ -238,41 +159,29 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage
 		</table>
 		<?php
 	}
+
 	
-	
-	
-	
-	private function print_site( &$site, $type )
+	private function print_site(&$site)
 	{
 		$admin_url = $site['url'].'/wp-admin';
-// 		switch( $type )
-// 		{
-// 			case 'theme':
-// 				$admin_url .= '/themes.php';
-// 				break;
-// 			
-// 			case 'plugin':
-// 				$admin_url .= '/plugins.php';
-// 				break;
-// 		}
+		
 		?>
-		
-		<div class="site-info">
-		
-			<span class="title"><a href="<?php echo $site['url']; ?>" target="_blank"><?php echo $site['title'] ?: '<i>--No Title--</i>'; ?></a></span>
-			<span class="admin-links">
-			
-			<a href="<?php echo 'site-info.php?id='.$site['id'] ?> " target="_blank">Network Admin</a>&nbsp;&nbsp;
-				<a href="<?php echo $admin_url; ?>" target="_blank">Admin</a>&nbsp;&nbsp;
-				<a href="<?php echo $admin_url.'/themes.php'; ?>" target="_blank">Themes</a>&nbsp;&nbsp;
-				<a href="<?php echo $admin_url.'/plugins.php'; ?>" target="_blank">Plugins</a>&nbsp;&nbsp;
-			</span>
-		
-		</div>
-		
+		<tr>
+		<td colspan="4">
+			<div class="site-info">
+				<span class="title"><a href="<?php echo $site['url']; ?>" target="_blank"><?php echo $site['title'] ?: '<i>--No Title--</i>'; ?></a></span>
+				<span class="admin-links">
+				
+				<a href="<?php echo 'site-info.php?id='.$site['id'] ?> " target="_blank">Network Admin</a>&nbsp;|&nbsp;
+					<a href="<?php echo $admin_url; ?>" target="_blank">Admin</a>&nbsp;|&nbsp;
+					<a href="<?php echo $admin_url.'/themes.php'; ?>" target="_blank">Themes</a>&nbsp;|&nbsp;
+					<a href="<?php echo $admin_url.'/plugins.php'; ?>" target="_blank">Plugins</a>&nbsp;&nbsp;
+				</span>
+			</div>
+		</td>
+		</tr>
 		<?php
 	}
 	
 } // class TT_ThemeListAdminPage extends APL_AdminPage
 endif; // if( !class_exists('TT_ThemeListAdminPage') )
-

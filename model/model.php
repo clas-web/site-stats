@@ -100,7 +100,6 @@ class SITES_STATS_Model
 			$stats['plugin'][$p]['sites_archived'] = array();
 		}
 		
-		
 		foreach( $sites as $site )
 		{
 			
@@ -115,15 +114,13 @@ class SITES_STATS_Model
 			}
 			$stats['theme'][$theme]['sites'][] = $site;
 			
-			//Echo out the plugins that show as active in the db, but don't exist
-			
 			foreach( $site['plugins'] as $plugin )
 			{
 				if( !array_key_exists($plugin, $stats['plugin']) )
 				{
-					echo '<div class="hidden">';
 					$stats['plugin'][$plugin] = array();
-					
+					//Echo out the plugins that show as active in the db, but don't exist
+					echo '<div class="hidden">';
 					echo $site['url'];
 					echo '<br>'.$plugin.'<br><br>';
 					echo '</div>';
@@ -133,9 +130,6 @@ class SITES_STATS_Model
 				}
 				$stats['plugin'][$plugin]['sites'][] = $site;
 			}
-		
-
-			
 		}
 		
 		foreach( $sites_archived as $site_archived )
