@@ -121,12 +121,23 @@ class SITE_STATS_MainAdminPage extends APL_AdminPage{
 			else {
 				echo '<tbody>';
 			}
+
+			//Need to make sure things are countable before they are counted -XM Aug 2023
+                        $count_plugin_info_sites = 0;
+                        $count_plugin_info_sites_archived = 0;
+                        if (is_countable($plugin_info['sites'])) { 
+                                $count_plugin_info_sites = count($plugin_info['sites']);
+                        }
+                        if (is_countable($plugin_info['sites_archived'])) {
+                                $count_plugin_info_sites_archived = count($plugin_info['sites_archived']);
+                        }
+				
 			echo '<tr>
 			<td><label for="'.$plugin_title.'">'.$plugin_title.'</label>
 				<input type="checkbox" name="'.$plugin_title.'" id="'.$plugin_title.'" data-toggle="toggle"></td>
 			<td class="version">'.$plugin_info['data']['Version'].'</td>
-			<td class="count">'.count($plugin_info['sites']).'</td>
-			<td class="count">'.count($plugin_info['sites_archived']).'</td>
+			<td class="count">'.$count_plugin_info_sites.'</td>
+			<td class="count">'.$count_plugin_info_sites_archived.'</td>
 			</tr></tbody><tbody class="hidden">';
  			$sites = $plugin_info['sites'];
 			if ($sites){
